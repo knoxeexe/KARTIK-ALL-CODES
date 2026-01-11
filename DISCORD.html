@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KARTIK X-CORP | MASTER VAULT</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root { --bg: #050505; --gold: #ffd700; --blue: #00d4ff; --red: #ff4d4d; --green: #00ff88; --purple: #a020f0; --card: #0d0d10; --text: #ffffff; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); margin: 0; display: flex; height: 100vh; overflow: hidden; }
+        .sidebar { width: 260px; background: #0a0a0c; border-right: 1px solid #1a1a1c; display: flex; flex-direction: column; }
+        .brand { padding: 30px; text-align: center; font-weight: bold; color: var(--gold); border-bottom: 1px solid #222; letter-spacing: 2px; font-size: 1.2rem; }
+        .nav-item { padding: 18px 25px; cursor: pointer; color: #666; transition: 0.3s; display: flex; align-items: center; gap: 12px; font-weight: bold; font-size: 0.85rem; }
+        .nav-item:hover { background: #111; color: #fff; }
+        .active { background: #111; color: #fff !important; border-left: 5px solid; }
+        .main { flex-grow: 1; padding: 40px; overflow-y: auto; background: radial-gradient(circle at top, #111, #050505); }
+        .storage-container { background: #111; padding: 12px 20px; border-radius: 10px; border: 1px solid #222; margin-bottom: 25px; display: flex; align-items: center; gap: 20px; }
+        .storage-info { font-size: 0.75rem; color: #888; font-weight: bold; min-width: 180px; }
+        .bar-bg { flex-grow: 1; background: #222; height: 10px; border-radius: 10px; overflow: hidden; }
+        .bar-fill { height: 100%; background: linear-gradient(90deg, var(--green), var(--gold)); width: 0%; transition: 0.5s; }
+        .clear-btn { background: rgba(255, 77, 77, 0.1); color: var(--red); border: 1px solid var(--red); padding: 5px 12px; border-radius: 5px; font-size: 0.7rem; cursor: pointer; font-weight: bold; transition: 0.3s; }
+        .clear-btn:hover { background: var(--red); color: #fff; }
+        .header-box { display: flex; justify-content: space-between; align-items: center; margin-bottom: 35px; border-bottom: 1px solid #222; padding-bottom: 20px; }
+        .add-btn { background: #1a1a1e; color: #fff; border: 1px solid #444; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: bold; transition: 0.3s; }
+        .add-btn:hover { background: #fff; color: #000; }
+        .upload-btn { background: var(--purple); color: #fff; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: bold; transition: 0.3s; }
+        .code-card { background: var(--card); border: 1px solid #222; border-radius: 15px; margin-bottom: 25px; overflow: hidden; }
+        .card-head { padding: 15px 25px; background: #16161a; border-bottom: 1px solid #222; display: flex; justify-content: space-between; align-items: center; }
+        .card-head span { font-size: 0.9rem; font-weight: 800; color: #eee; text-transform: uppercase; }
+        .card-body { padding: 20px; }
+        pre { background: #000; padding: 15px; color: #00ff00; border-radius: 8px; font-size: 0.8rem; white-space: pre-wrap; word-break: break-all; margin: 0; cursor: pointer; border: 1px solid #1a1a1c; }
+        .sr-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: #222; border-radius: 8px; overflow: hidden; }
+        .sr-box { background: #000; padding: 15px; }
+        .sr-label { font-size: 0.6rem; color: #444; text-transform: uppercase; margin-bottom: 8px; font-weight: bold; }
+        .del-btn { color: #333; cursor: pointer; }
+        .del-btn:hover { color: var(--red); }
+        #modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); justify-content: center; align-items: center; z-index: 1000; }
+        .form-box { background: #111; padding: 35px; border-radius: 20px; width: 480px; border: 1px solid #333; }
+        input, textarea, select { width: 100%; background: #000; border: 1px solid #333; color: #fff; padding: 12px; margin-bottom: 15px; border-radius: 8px; }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <div class="brand">KARTIK X-CORP</div>
+        <div class="nav-item active" style="border-color:var(--gold)" onclick="showTab('aimbot', this)"><i class="fas fa-crosshairs"></i> AIMBOT</div>
+        <div class="nav-item" style="border-color:var(--blue)" onclick="showTab('sniper', this)"><i class="fas fa-bullseye"></i> SNIPER</div>
+        <div class="nav-item" style="border-color:var(--red)" onclick="showTab('brutal', this)"><i class="fas fa-fire"></i> BRUTAL</div>
+        <div class="nav-item" style="border-color:var(--green)" onclick="showTab('other', this)"><i class="fas fa-folder-plus"></i> OTHER CODES</div>
+        <div class="nav-item" style="border-color:var(--purple)" onclick="showTab('personal', this)"><i class="fas fa-file-code"></i> PERSONAL FILES</div>
+    </div>
+
+    <div class="main">
+        <div class="storage-container">
+            <div class="storage-info" id="storage-text">USED: 0 KB / 5120 KB</div>
+            <div class="bar-bg"><div class="bar-fill" id="storage-bar"></div></div>
+            <button class="clear-btn" onclick="clearStorage()"><i class="fas fa-trash-sweep"></i> CLEAR ALL</button>
+        </div>
+        <div class="header-box">
+            <h2 id="tab-title">AIMBOT CODES</h2>
+            <div id="action-area"><button class="add-btn" onclick="openModal()">+ ADD NEW CODE</button></div>
+        </div>
+        <div id="code-list"></div>
+    </div>
+
+    <input type="file" id="fileInput" class="hidden" onchange="handleFileUpload(this.files)">
+
+    <div id="modal">
+        <div class="form-box">
+            <h2 style="color:var(--gold); margin-top:0;">New Entry</h2>
+            <select id="form-type" onchange="toggleInputs()">
+                <option value="aimbot">Aimbot (Offset Mode)</option>
+                <option value="sniper">Sniper (Scan-Replace)</option>
+                <option value="brutal">Brutal (Scan-Replace)</option>
+                <option value="other">Other (Scan-Replace)</option>
+            </select>
+            <input type="text" id="form-name" placeholder="Feature Name">
+            <div id="aim-fields">
+                <div style="display:flex; gap:10px;"><input type="text" id="form-off1" placeholder="Offset 1"><input type="text" id="form-off2" placeholder="Offset 2"></div>
+                <textarea id="form-hex" placeholder="Hex Code..." rows="4"></textarea>
+            </div>
+            <div id="sr-fields" class="hidden">
+                <textarea id="form-search" placeholder="SEARCH Hex..." rows="3"></textarea>
+                <textarea id="form-replace" placeholder="REPLACE Hex..." rows="3"></textarea>
+            </div>
+            <button class="add-btn" style="width:100%; background:var(--gold); color:#000;" onclick="saveData()">SAVE DATA</button>
+            <button class="add-btn" style="width:100%; margin-top:10px; background:transparent; border:none; color:#555;" onclick="closeModal()">CANCEL</button>
+        </div>
+    </div>
+
+    <script>
+        // DATABASE LOADED WITH YOUR CODES [cite: 1, 5, 25, 45, 61]
+        let db = JSON.parse(localStorage.getItem('xcorp_final_vault')) || { 
+            aimbot: [
+                { name: "HEAD (REGION TEST)", off1: "0x80", off2: "0x7C", hex: "FF FF FF FF FF FF FF FF 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? 00 00 00 00 00 00 00 00 00 00 00 00 A5 43" },
+                { name: "NECK (REGION TEST)", off1: "176", off2: "124", hex: "FF FF FF FF FF FF FF FF 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? 00 00 00 00 00 00 00 00 00 00 00 00 A5 43" },
+                { name: "HEAD 1", off1: "170", off2: "166", hex: "FF FF FF FF FF FF FF FF 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? 00 00 00 00 00 00 00 00 00 00 00 00 A5 43" },
+                { name: "NECK 1", off1: "218", off2: "166", hex: "FF FF FF FF FF FF FF FF 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? 00 00 00 00 00 00 00 00 00 00 00 00 A5 43" },
+                { name: "HEAD 2", off1: "0xAA", off2: "0xA6", hex: "FF FF FF FF FF FF FF FF 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? 00 00 00 00 00 00 00 00 00 00 00 00 A5 43" }
+            ],
+            sniper: [
+                { name: "SNIPER AIM", search: "01 00 00 00 00 00 00 00 00 00 00 00 41 00 00 00 00 00 00 00 00 00 00 00 01", replace: "01 00 00 00 00 00 00 00 00 00 00 00 41 00 00 00 00 00 00 00 00 00 00 00 00" },
+                { name: "SNIPER SCOPE (MACRO)", search: "FF FF FF FF 08 00 00 00 00 00 60 40 CD CC 8C 3F 8F C2 F5 3C CD CC CC 3D 06 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 80 3F 33 33", replace: "FF FF FF FF 08 00 00 00 00 00 60 40 CD CC 8C 3F 8F C2 F5 3C CD CC CC 3D 06 00 00 00 00 00 19 3E 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 33 33" },
+                { name: "SNIPER DELAY", search: "EA 00 60 A0 E3 06 00 A0 E1 18 D0 4B E2 02 8B BD EC 70 8C", replace: "01 00 AF E3" }
+            ],
+            brutal: [
+                { name: "NO RECOIL", search: "30 48 2D E9 08 B0 8D E2 02 8B 2D ED 00 40 A0 E1 38 01 9F E5 00 00 8F E0 00 00 D0 E5", replace: "00 00 A0 E3 1E FF 2F E1 02 8B 2D ED 00 40 A0 E1 38 01 9F E5 00 00 8F E0 00 00 D0 E5" },
+                { name: "FAST LANDING", search: "00 00 00 00 00 00 80 3F 00 00 00 00 00 00 00 00 00 00 80 BF 00 00 00 00 00 00 80 BF 00 00 00 00 00 00 00 00 00 00 80 3F 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 80 3F 00 00 00 00 00 00 00 00 00 00 80 BF 00 00 80 7F 00 00 80 7F 00 00 80 7F 00 00 80 FF", replace: "00 00 00 00 00 00 FF 41 00 00 00 00 00 00 00 00 00 00 80 BF 00 00 00 00 00 00 80 BF 00 00 00 00 00 00 00 00 00 00 80 3F 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 80 3F 00 00 00 00 00 00 00 00 00 00 80 BF 00 00 80 7F 00 00 80 7F 00 00 80 7F 00 00 80 FF" }
+            ],
+            other: [
+                { name: "AIMFOV 180*", search: "00 00 40 40 00 00 70 42 00 00 00 00 00 00 C0", replace: "00 00 F0 FF 00 00 70 42 00 00 00 00 00 00 C0" },
+                { name: "AIMFOV 360*", search: "70 42 00 00 00 00 00 00 C0 3F 0A D7 A3 3B 0A D7 A3 3B 8F C2 75 3D AE 47 E1 3D 9A 99 19 3E CD CC 4C 3E A4 70 FD 3E", replace: "FF FF 00 00 00 00 00 00 C0 3F 0A D7 A3 3B 0A D7 A3 3B 8F C2 75 3D AE 47 E1 3D 9A 99 19 3E CD CC 4C 3E A4 70 FD 3E" }
+            ],
+            personal: []
+        };
+
+        function updateStorageMeter() {
+            let total = 5120; let used = (JSON.stringify(db).length / 1024).toFixed(2);
+            let percent = (used / total * 100).toFixed(1);
+            document.getElementById('storage-text').innerText = `USED: ${used} KB / ${total} KB (${percent}%)`;
+            document.getElementById('storage-bar').style.width = percent + "%";
+            document.getElementById('storage-bar').style.background = percent > 80 ? "var(--red)" : "linear-gradient(90deg, var(--green), var(--gold))";
+        }
+
+        function clearStorage() { if(confirm("Saara data delete karein?")) { db = { aimbot: [], sniper: [], brutal: [], other: [], personal: [] }; localStorage.setItem('xcorp_final_vault', JSON.stringify(db)); render(); } }
+        function toggleInputs() { const type = document.getElementById('form-type').value; document.getElementById('aim-fields').classList.toggle('hidden', type !== 'aimbot'); document.getElementById('sr-fields').classList.toggle('hidden', type === 'aimbot'); }
+        function showTab(tab, el) { currentTab = tab; document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active')); el.classList.add('active'); document.getElementById('tab-title').innerText = tab.toUpperCase(); render(); }
+        function render() {
+            const list = document.getElementById('code-list'); list.innerHTML = '';
+            db[currentTab].forEach((item, i) => {
+                let content = currentTab === 'aimbot' ? `<div style="display:flex;gap:10px;margin-bottom:10px;"><div style="color:var(--gold);border:1px solid var(--gold);padding:4px 10px;border-radius:5px;font-size:0.8rem;cursor:pointer;" onclick="cpVal('${item.off1}')">${item.off1}</div><div style="color:var(--gold);border:1px solid var(--gold);padding:4px 10px;border-radius:5px;font-size:0.8rem;cursor:pointer;" onclick="cpVal('${item.off2}')">${item.off2}</div></div><pre onclick="cp(this)">${item.hex}</pre>` : 
+                `<div class="sr-grid"><div class="sr-box"><span class="sr-label">SEARCH</span><pre onclick="cp(this)">${item.search}</pre></div><div class="sr-box"><span class="sr-label">REPLACE</span><pre style="color:var(--blue)" onclick="cp(this)">${item.replace}</pre></div></div>`;
+                list.innerHTML += `<div class="code-card"><div class="card-head"><span>${item.name}</span><i class="fas fa-trash-alt del-btn" onclick="del(${i})"></i></div><div class="card-body">${content}</div></div>`;
+            });
+            updateStorageMeter();
+        }
+        function openModal() { document.getElementById('modal').style.display = 'flex'; }
+        function closeModal() { document.getElementById('modal').style.display = 'none'; }
+        function saveData() { 
+            const type = document.getElementById('form-type').value; const name = document.getElementById('form-name').value;
+            let data = { name };
+            if(type === 'aimbot') { data.off1 = document.getElementById('form-off1').value; data.off2 = document.getElementById('form-off2').value; data.hex = document.getElementById('form-hex').value; }
+            else { data.search = document.getElementById('form-search').value; data.replace = document.getElementById('form-replace').value; }
+            db[type].push(data); localStorage.setItem('xcorp_final_vault', JSON.stringify(db)); closeModal(); render(); 
+        }
+        function del(i) { db[currentTab].splice(i,1); localStorage.setItem('xcorp_final_vault', JSON.stringify(db)); render(); }
+        function cp(el) { navigator.clipboard.writeText(el.innerText); alert("Copied!"); }
+        function cpVal(v) { navigator.clipboard.writeText(v); alert("Offset Copied!"); }
+        render();
+    </script>
+</body>
+</html>
